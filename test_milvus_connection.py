@@ -1,8 +1,9 @@
 from pymilvus import connections
 from pymilvus.exceptions import MilvusException
+from pymilvus import utility
 
 
-def test_milvus_connection(host, port):
+def test_milvus_connection(host, port, collection):
     try:
         connections.connect(
             alias="default",
@@ -10,18 +11,18 @@ def test_milvus_connection(host, port):
             port=port,
             secure=False
         )
-        print("Successfully connected to Milvus server!")
+        print("Step 1. Connected to Milvus server!")
 
-        from pymilvus import utility
-        print(f"Milvus server version: {utility.get_server_version()}")
+        print(f"Step 2. Check Milvus server version ({utility.get_server_version()})")
 
-        connections.disconnect("default")
-        print("Disconnected from Milvus server.")
+        connections.connect(collection)
+        print(f"Step 3. Connected to Milvus collection '{collection}'")
     except MilvusException as e:
         print(f"Failed to connect to Milvus server. Error: {e}")
 
 
 if __name__ == "__main__":
-    milvus_host = "127.0.0.1" # 替換為你的 Milvus 容器 IP
+    milvus_host = "127.0.0.1"
     milvus_port = "19530"
-    test_milvus_connection(milvus_host, milvus_port)
+    milvus_collection = "default"
+    test_milvus_connection(milvus_host, milvus_port, milvus_collection)
